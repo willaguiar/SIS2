@@ -188,7 +188,7 @@ type fast_ice_avg_type
     flux_sh_top , & !< The upward sensible heat flux at the ice top [Q R Z T-1 ~> W m-2].
     evap_top    , & !< The upward evaporative moisture flux at top of the ice [R Z T-1 ~> kg m-2 s-1].
     flux_lw_top , & !< The net downward flux of longwave radiation at the top of the ice [Q R Z T-1 ~> W m-2].
-    flux_lw_top_phys  !< The physical (unmodified) net downward longwave flux at the top of the ice [W m-2].
+    flux_lw_top_phys , &!< The physical (unmodified) net downward longwave flux at the top of the ice [W m-2].
     flux_lh_top , & !< The upward flux of latent heat at the top of the ice [Q R Z T-1 ~> W m-2].
     lprec_top   , & !< The downward flux of liquid precipitation at the top of the ice [R Z T-1 ~> kg m-2 s-1].
     fprec_top   , & !< The downward flux of frozen precipitation at the top of the ice [R Z T-1 ~> kg m-2 s-1].
