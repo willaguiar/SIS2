@@ -86,7 +86,7 @@ contains
 !!   physics and the ocean.  Nothing here will be exposed to other modules until
 !!   after it has passed through avg_top_quantities.
 subroutine sum_top_quantities (FIA, ABT, flux_u, flux_v, flux_sh, evap, &
-       flux_sw, flux_lw, lprec, fprec, flux_lh, t_skin, SST, &
+       flux_sw, flux_lw, flux_lw_phys, flux_lw_ice, lprec, fprec, flux_lh, t_skin, SST, &
        sh_T0, evap_T0, lw_T0, dshdt, devapdt, dlwdt, G, US, IG)
   type(fast_ice_avg_type),       intent(inout) :: FIA !< A type containing averages of fields
                                                       !! (mostly fluxes) over the fast updates
@@ -106,6 +106,12 @@ subroutine sum_top_quantities (FIA, ABT, flux_u, flux_v, flux_sh, evap, &
                            !! from the top of the ice to the atmosphere [R Z T-1 ~> kg m-2 s-1].
   real, dimension(G%isd:G%ied,G%jsd:G%jed,0:IG%CatIce), &
     intent(in) :: flux_lw  !< The net longwave heat flux from the atmosphere into the
+                           !! ice or ocean [Q R Z T-1 ~> W m-2].
+  real, dimension(G%isd:G%ied,G%jsd:G%jed,0:IG%CatIce), &
+    intent(in) :: flux_lw_phys  !< The net longwave heat flux from the atmosphere into the
+                           !! ice or ocean [Q R Z T-1 ~> W m-2].
+  real, dimension(G%isd:G%ied,G%jsd:G%jed,0:IG%CatIce), &
+    intent(in) :: flux_lw_ice  !< The net longwave heat flux from the atmosphere into the
                            !! ice or ocean [Q R Z T-1 ~> W m-2].
   real, dimension(G%isd:G%ied,G%jsd:G%jed,0:IG%CatIce), &
     intent(in) :: lprec    !< The liquid precipitation onto the ice [R Z T-1 ~> kg m-2 s-1].
@@ -161,6 +167,7 @@ subroutine sum_top_quantities (FIA, ABT, flux_u, flux_v, flux_sh, evap, &
     FIA%flux_u_top(:,:,:) = 0.0 ; FIA%flux_v_top(:,:,:) = 0.0
     FIA%flux_sh_top(:,:,:) = 0.0 ; FIA%evap_top(:,:,:) = 0.0
     FIA%flux_lw_top(:,:,:) = 0.0 ; FIA%flux_lh_top(:,:,:) = 0.0
+    FIA%flux_lw_top_phys(:,:,:) = 0.0
     FIA%flux_sw_top(:,:,:,:) = 0.0
     FIA%lprec_top(:,:,:) = 0.0 ; FIA%fprec_top(:,:,:) = 0.0
     FIA%flux_sw_dn(:,:,:) = 0.0 ; FIA%Tskin_avg(:,:) = 0.0
@@ -182,6 +189,9 @@ subroutine sum_top_quantities (FIA, ABT, flux_u, flux_v, flux_sh, evap, &
     FIA%evap_top(i,j,k)  = FIA%evap_top(i,j,k)  + evap(i,j,k)
     do b=1,nb ; FIA%flux_sw_top(i,j,k,b) = FIA%flux_sw_top(i,j,k,b) + flux_sw(i,j,k,b) ; enddo
     FIA%flux_lw_top(i,j,k) = FIA%flux_lw_top(i,j,k) + flux_lw(i,j,k)
+    ! Accumulate into FIA: store the physical flux separately for the ocean bookkeeping
+    FIA%flux_lw_top_phys(i,j,k) = FIA%flux_lw_top_phys(i,j,k) + flux_lw_phys
+    FIA%flux_lw_top(i,j,k)      = FIA%flux_lw_top(i,j,k)      + flux_lw_ice
     FIA%lprec_top(i,j,k)   = FIA%lprec_top(i,j,k)   + lprec(i,j,k)
     FIA%fprec_top(i,j,k)   = FIA%fprec_top(i,j,k)   + fprec(i,j,k)
     FIA%flux_lh_top(i,j,k) = FIA%flux_lh_top(i,j,k) + flux_lh(i,j,k)
@@ -439,7 +449,7 @@ subroutine find_excess_fluxes(FIA, TSF, XSF, part_size, G, US, IG)
 
   do k=0,ncat ; do j=jsc,jec ; do i=isc,iec
     XSF%flux_sh(i,j) = XSF%flux_sh(i,j) + part_size(i,j,k) * FIA%flux_sh_top(i,j,k)
-    XSF%flux_lw(i,j) = XSF%flux_lw(i,j) + part_size(i,j,k) * FIA%flux_lw_top(i,j,k)
+    XSF%flux_lw(i,j) = XSF%flux_lw(i,j) + part_size(i,j,k) * FIA%flux_lw_top_phys(i,j,k)
     XSF%flux_lh(i,j) = XSF%flux_lh(i,j) + part_size(i,j,k) * FIA%flux_lh_top(i,j,k)
     do b=1,nb
       XSF%flux_sw(i,j,b) = XSF%flux_sw(i,j,b) + part_size(i,j,k) * FIA%flux_sw_top(i,j,k,b)
@@ -587,6 +597,8 @@ subroutine do_update_ice_model_fast(Atmos_boundary, IST, sOSS, Rad, FIA, &
     flux_lh, &  ! The upward latent heat flux associated with sublimation or
                 ! evaporation [Q R Z T-1 ~> W m-2].
     flux_lw, &  ! The net downward longwave heat flux into the ice [Q R Z T-1 ~> W m-2].
+    flux_lw_phys, &  ! The net downward longwave heat flux into the ice [Q R Z T-1 ~> W m-2].
+    flux_lw_ice, &  ! The net downward longwave heat flux into the ice [Q R Z T-1 ~> W m-2].
     flux_u, &   ! The grid-aligned quasi-zonal wind stress on the ice [R Z L T-2 ~> Pa].
     flux_v, &   ! The grid-aligned quasi-meridional wind stress on the ice [R Z L T-2 ~> Pa].
     lprec, &    ! The liquid precipitation onto the ice [R Z T-1 ~> kg m-2 s-1].
@@ -664,6 +676,24 @@ subroutine do_update_ice_model_fast(Atmos_boundary, IST, sOSS, Rad, FIA, &
       flux_sh(i,j,k)  = US%W_m2_to_QRZ_T*Atmos_boundary%t_flux(i2,j2,k2)
       evap(i,j,k)  = US%kg_m2s_to_RZ_T*Atmos_boundary%q_flux(i2,j2,k2)
       flux_lw(i,j,k) = US%W_m2_to_QRZ_T*Atmos_boundary%lw_flux(i2,j2,k2)
+       ! --- Preserve the physical longwave before applying any ghost ---
+      flux_lw_phys = flux_lw(i,j,k)
+      ! Default: ice sees the physical flux
+      flux_lw_ice = flux_lw_phys
+      ! Apply ice-only ghost flux if enabled, only for ice categories (k > 0)
+      if (associated(CS%ice_thm_CSp)) then
+      if (CS%ice_thm_CSp%ghost_lw_ice_on .and. k > 0) then
+          ! Determine whether this j index is within the southern or northern bands
+          ! G%jsc and G%jec are domain southern and northern indices for this grid.
+          if ((CS%ice_thm_CSp%ghost_lw_j_south > 0 .and. j <= (G%jsc + CS%ice_thm_CSp%ghost_lw_j_south - 1)) .or. &
+              (CS%ice_thm_CSp%ghost_lw_j_north > 0 .and. j >= (G%jec - CS%ice_thm_CSp%ghost_lw_j_north + 1))) then
+          ! Ghost value is stored already in internal units in CS%ghost_lw_ice
+          flux_lw_ice = flux_lw_phys + CS%ice_thm_CSp%ghost_lw_ice
+          endif
+      endif
+      endif
+      ! Use flux_lw_ice for the ice thermodynamics from this point on:
+      flux_lw(i,j,k) = flux_lw_ice
       flux_sw(i,j,k,NIR_DIR) = US%W_m2_to_QRZ_T*Atmos_boundary%sw_flux_nir_dir(i2,j2,k2)
       flux_sw(i,j,k,NIR_DIF) = US%W_m2_to_QRZ_T*Atmos_boundary%sw_flux_nir_dif(i2,j2,k2)
       flux_sw(i,j,k,VIS_DIR) = US%W_m2_to_QRZ_T*Atmos_boundary%sw_flux_vis_dir(i2,j2,k2)
