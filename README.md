@@ -1,3 +1,7 @@
+#Fork and branch specifics
+This is a fork from gfdl/dev, with ice thermodynamics altered to include a simple ghost flux over sea ice. This branch is at a commit state compareble with mom6-panan. The ghost flux is assigned at the namelist level, and applied globally, only constrained by latitude indexes. Edits in SIS2 code made by Wilton Aguiar
+
+
 # SIS2
 
 NOAA-GFDL's Sea Ice Simulator version 2
