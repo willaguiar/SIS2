@@ -19,7 +19,7 @@ public :: get_SIS2_thermo_coefs, ice_thermo_init, ice_thermo_end
 public :: Temp_from_Enth_S, Temp_from_En_S, enth_from_TS, enthalpy_from_TS
 public :: enthalpy_liquid_freeze, T_Freeze, calculate_T_Freeze, enthalpy_liquid
 public :: e_to_melt_TS, energy_melt_enthS, latent_sublimation
-public :: SIS2_ice_thm_CS public :: ghost_lw_ice_on, ghost_lw_ice, ghost_lw_j_south, ghost_lw_j_north
+
 
 !> This type contains the parameters regulating sea-ice thermodynamics
 type, public :: ice_thermo_type ; private
@@ -94,6 +94,7 @@ type, public :: SIS2_ice_thm_CS ; private
   ! mw/new - end of melt pond control data
 end type SIS2_ice_thm_CS
 
+public :: SIS2_ice_thm_CS public :: ghost_lw_ice_on, ghost_lw_ice, ghost_lw_j_south, ghost_lw_j_north
 
 contains
 
