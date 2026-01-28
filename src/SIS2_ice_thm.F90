@@ -52,7 +52,7 @@ end type ice_thermo_type
 
 
 !> The control structure for the SIS2 ice thermodynamics
-type, public :: SIS2_ice_thm_CS ; private
+type, public :: SIS2_ice_thm_CS
   ! properties of ice, snow, and seawater (NCAR CSM values)
   real :: KS   !< Thermal conductivity of snow, often 0.31 [Q R Z2 T-1 ~> W m-1 degC-1]
   real :: KI   !< Thermal conductivity of ice, often 2.03 [Q R Z2 T-1 ~> W m-1 degC-1]
@@ -93,8 +93,6 @@ type, public :: SIS2_ice_thm_CS ; private
   integer :: ghost_lw_j_north = 0        !< number of j cells from northern edge to apply ghost
   ! mw/new - end of melt pond control data
 end type SIS2_ice_thm_CS
-
-public :: SIS2_ice_thm_CS public :: ghost_lw_ice_on, ghost_lw_ice, ghost_lw_j_south, ghost_lw_j_north
 
 contains
 
