@@ -594,7 +594,6 @@ subroutine do_update_ice_model_fast(Atmos_boundary, IST, sOSS, Rad, FIA, &
     flux_lh, &  ! The upward latent heat flux associated with sublimation or
                 ! evaporation [Q R Z T-1 ~> W m-2].
     flux_lw, &  ! The net downward longwave heat flux into the ice [Q R Z T-1 ~> W m-2].
-    flux_lw_phys, &  ! The net downward longwave heat flux into the ice [Q R Z T-1 ~> W m-2].
     flux_u, &   ! The grid-aligned quasi-zonal wind stress on the ice [R Z L T-2 ~> Pa].
     flux_v, &   ! The grid-aligned quasi-meridional wind stress on the ice [R Z L T-2 ~> Pa].
     lprec, &    ! The liquid precipitation onto the ice [R Z T-1 ~> kg m-2 s-1].
@@ -632,6 +631,7 @@ subroutine do_update_ice_model_fast(Atmos_boundary, IST, sOSS, Rad, FIA, &
   character(len=8) :: nstr
 
   real :: tot_heat_in, enth_here, enth_imb, norm_enth_imb
+  real :: flux_lw_phys, flux_lw_ice
   real :: SW_absorbed ! Absorbed shortwave heating [Q R Z T-1 ~> W m-2]
   real :: I_Nk     ! The inverse of the number of internal ice layers [nondim].
 
