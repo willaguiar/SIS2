@@ -631,7 +631,7 @@ subroutine do_update_ice_model_fast(Atmos_boundary, IST, sOSS, Rad, FIA, &
   integer :: i, j, k, m, i2, j2, k2, isc, iec, jsc, jec, ncat, i_off, j_off, NkIce, b, nb
   character(len=8) :: nstr
 
-  real :: tot_heat_in, enth_here, enth_imb, norm_enth_imb,
+  real :: tot_heat_in, enth_here, enth_imb, norm_enth_imb
   real :: SW_absorbed ! Absorbed shortwave heating [Q R Z T-1 ~> W m-2]
   real :: I_Nk     ! The inverse of the number of internal ice layers [nondim].
 
