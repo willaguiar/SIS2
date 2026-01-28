@@ -88,7 +88,7 @@ contains
 !!   physics and the ocean.  Nothing here will be exposed to other modules until
 !!   after it has passed through avg_top_quantities.
 subroutine sum_top_quantities (FIA, ABT, flux_u, flux_v, flux_sh, evap, &
-       flux_sw, flux_lw, flux_lw_phys, flux_lw_ice, lprec, fprec, flux_lh, t_skin, SST, &
+       flux_sw, flux_lw, lprec, fprec, flux_lh, t_skin, SST, &
        sh_T0, evap_T0, lw_T0, dshdt, devapdt, dlwdt, G, US, IG)
   type(fast_ice_avg_type),       intent(inout) :: FIA !< A type containing averages of fields
                                                       !! (mostly fluxes) over the fast updates
