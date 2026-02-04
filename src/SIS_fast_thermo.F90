@@ -681,8 +681,8 @@ subroutine do_update_ice_model_fast(Atmos_boundary, IST, sOSS, Rad, FIA, &
       if (CS%ice_thm_CSp%ghost_lw_ice_on .and. k > 0) then
           ! Determine whether this j index is within the southern or northern bands
           ! G%jsc and G%jec are domain southern and northern indices for this grid.
-          if ((CS%ice_thm_CSp%ghost_lw_j_south > 0 .and. j <= (G%jsc + CS%ice_thm_CSp%ghost_lw_j_south - 1)) .or. &
-              (CS%ice_thm_CSp%ghost_lw_j_north > 0 .and. j >= (G%jec - CS%ice_thm_CSp%ghost_lw_j_north + 1))) then
+          if ((CS%ice_thm_CSp%ghost_lw_j_south > 0 .and. j >= (G%jsc + CS%ice_thm_CSp%ghost_lw_j_south - 1)) .and. &
+              (CS%ice_thm_CSp%ghost_lw_j_north > 0 .and. j <= (G%jec - CS%ice_thm_CSp%ghost_lw_j_north + 1))) then
           ! Ghost value is stored already in internal units in CS%ghost_lw_ice
           flux_lw_ice = flux_lw_phys + CS%ice_thm_CSp%ghost_lw_ice
           endif
