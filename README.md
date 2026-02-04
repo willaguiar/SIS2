@@ -1,16 +1,16 @@
 # Ghost Flux
-This is a fork from gfdl/dev, with ice thermodynamics altered to include a simple longwave ghost flux over sea ice. This branch is at a commit state compatible with  mom6-panan and can be used directly for compilation of panan. The ghost flux is assigned as a set of parameters under SIS_input in panan, and applied globally, only constrained by latitude indexes. The relevant parameters for the ghost flux are:
+This is a fork from gfdl/dev, with ice thermodynamics altered to include a simple longwave ghost flux over sea ice. This branch is at a commit state compatible with  mom6-panan and can be used directly for compilation of panan. The ghost flux is assigned as a set of parameters under SIS_input in panan, and applied circumpolarlly, only constrained by latitude indexes. The relevant parameters for the ghost flux are:
 
-GHOST_LW_ICE_ON : if True, applies the ghost flux. default = False
-
-
-GHOST_LW_ICE : Ghost longwave flux applied to ice thermodynamics (W m-2). default = 0.0
+`GHOST_LW_ICE_ON` : if True, applies the ghost flux. default = False
 
 
-GHOST_LW_J_SOUTH : Number of j (latitude) cells inward from southernmost row to apply ghost flux (integer). I.e., if equals 100, then the southernmost boundary for the ghost flux will be 100 latitude cells from the model South boundary. default = 0
+`GHOST_LW_ICE` : Ghost longwave flux applied to ice thermodynamics (W m-2). default = 0.0
 
 
-GHOST_LW_J_NORTH : Number of j cells inward from northernmost row to apply ghost flux (integer). I.e., if equals 10, then the northermost boundary for the ghos	flux will be 10 latitude cells from the model North boundary. default =0
+`GHOST_LW_J_SOUTH` : Number of j (latitude) cells inward from southernmost row to apply ghost flux (integer). I.e., if equals 100, then the southernmost boundary for the ghost flux will be 100 latitude cells from the model South boundary. default = 0
+
+
+`GHOST_LW_J_NORTH` : Number of j cells inward from northernmost row to apply ghost flux (integer). I.e., if equals 10, then the northermost boundary for the ghos	flux will be 10 latitude cells from the model North boundary. default =0
 
 !*Warning*: if GHOST_LW_J_SOUTH=GHOST_LW_J_SOUTH=0, then no ghost flux is applied
 
