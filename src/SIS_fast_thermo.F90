@@ -662,6 +662,9 @@ subroutine do_update_ice_model_fast(Atmos_boundary, IST, sOSS, Rad, FIA, &
     call IST_chksum("Start do_update_ice_model_fast", IST, G, US, IG)
 
   !$OMP parallel do default(shared) private(i2,j2,k2)
+  print *, 'south=', CS%ice_thm_CSp%ghost_lw_j_south
+  print *, 'north=', CS%ice_thm_CSp%ghost_lw_j_north
+  print *, 'jsc=', G%jsc, 'jec=', G%jec
   do j=jsc,jec
     !   Set up local copies of fluxes.  The Atmos_boundary arrays may have
     ! different index conventions than are used internally in this component.
