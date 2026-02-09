@@ -627,6 +627,7 @@ subroutine do_update_ice_model_fast(Atmos_boundary, IST, sOSS, Rad, FIA, &
   real :: sw_tot  ! sum over all shortwave (dir/dif and vis/nir) components [Q R Z T-1 ~> W m-2].
   real :: snow_wt ! A fractional weighting of snow in the category surface area [nondim].
   real :: LatHtVap       ! The latent heat of vaporization of water at 0C [Q ~> J kg-1].
+  real :: real_lat  ! The actual geographic latitude at grid point [degrees]
   integer :: i, j, k, m, i2, j2, k2, isc, iec, jsc, jec, ncat, i_off, j_off, NkIce, b, nb
   character(len=8) :: nstr
 
@@ -682,10 +683,11 @@ subroutine do_update_ice_model_fast(Atmos_boundary, IST, sOSS, Rad, FIA, &
       ! Apply ice-only ghost flux if enabled, only for ice categories (k > 0)
       if (associated(CS%ice_thm_CSp)) then
       if (CS%ice_thm_CSp%ghost_lw_ice_on .and. k > 0) then
-          ! Determine whether this j index is within the southern or northern bands
-          ! G%jsc and G%jec are domain southern and northern indices for this grid.
-          if ((CS%ice_thm_CSp%ghost_lw_j_south > 0 .and. j <= (G%jsc + CS%ice_thm_CSp%ghost_lw_j_south - 1)) .or. &
-              (CS%ice_thm_CSp%ghost_lw_j_north > 0 .and. j >= (G%jec - CS%ice_thm_CSp%ghost_lw_j_north + 1))) then
+          ! Get the actual geographic latitude at this grid point
+          real_lat = G%geoLatT(i,j)
+          ! Apply ghost flux if latitude is within the specified band
+          if (real_lat >= CS%ice_thm_CSp%ghost_lw_lat_south .and. &
+              real_lat <= CS%ice_thm_CSp%ghost_lw_lat_north) then
           ! Ghost value is stored already in internal units in CS%ghost_lw_ice
           flux_lw_ice = flux_lw_phys + CS%ice_thm_CSp%ghost_lw_ice
           endif

@@ -89,8 +89,10 @@ type, public :: SIS2_ice_thm_CS
   ! Add control parameters for ice-only ghost longwave flux experiment:
   logical :: ghost_lw_ice_on = .false.    !< If true, apply ghost LW to ice thermodynamics
   real    :: ghost_lw_ice = 0.0           !< Ghost LW value in internal model units (set on init)
-  integer :: ghost_lw_j_south = 0        !< number of j cells from southern edge to apply ghost
-  integer :: ghost_lw_j_north = 0        !< number of j cells from northern edge to apply ghost
+  !integer :: ghost_lw_j_south = 0        !< number of j cells from southern edge to apply ghost
+  !integer :: ghost_lw_j_north = 0        !< number of j cells from northern edge to apply ghost
+  real :: ghost_lw_lat_south = -90.0        !<Southern latitude boundary for ghost flux (degrees)
+  real :: ghost_lw_lat_north = -40.0        !<Northern latitude boundary for ghost flux (degrees)
   ! mw/new - end of melt pond control data
 end type SIS2_ice_thm_CS
 
@@ -121,12 +123,12 @@ subroutine SIS2_ice_thm_init(US, param_file, CS)
   call get_param(param_file, mdl, "GHOST_LW_ICE", CS%ghost_lw_ice, &
                  "Ghost longwave flux applied to ice thermodynamics (W m-2).", &
                  units="W m-2", default=0.0, scale=US%W_m2_to_QRZ_T, do_not_log=.false.)
-  call get_param(param_file, mdl, "GHOST_LW_J_SOUTH", CS%ghost_lw_j_south, &
-                 "Number of j cells inward from southernmost row to apply ghost flux (integer).", &
-                 default=0)
-  call get_param(param_file, mdl, "GHOST_LW_J_NORTH", CS%ghost_lw_j_north, &
-                 "Number of j cells inward from northernmost row to apply ghost flux (integer).", &
-                 default=0)
+  call get_param(param_file, mdl, "GHOST_LW_LAT_SOUTH", CS%ghost_lw_lat_south, &
+                 "Southern latitude boundary for ghost flux application (degrees North).", &
+                 default=-90.0)
+  call get_param(param_file, mdl, "GHOST_LW_LAT_NORTH", CS%ghost_lw_lat_north, &
+                 "Northern latitude boundary for ghost flux application (degrees North).", &
+                 default=-40.0)
   call get_param(param_file, mdl, "SNOW_CONDUCTIVITY", CS%Ks, &
                  "The conductivity of heat in snow.", &
                  units="W m-1 K-1", default=0.31, scale=US%W_m2_to_QRZ_T*US%m_to_Z)
